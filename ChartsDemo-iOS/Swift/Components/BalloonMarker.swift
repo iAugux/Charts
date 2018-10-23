@@ -21,6 +21,10 @@ open class BalloonMarker: MarkerImage
     open var insets: UIEdgeInsets
     open var minimumSize = CGSize()
     
+    open var fixedY: CGFloat?
+    open var fixedX: CGFloat?
+    open var offsetPoint: CGPoint = .zero
+    
     fileprivate var label: String?
     fileprivate var _labelSize: CGSize = CGSize()
     fileprivate var _paragraphStyle: NSMutableParagraphStyle?
@@ -87,7 +91,24 @@ open class BalloonMarker: MarkerImage
     {
         guard let label = label else { return }
         
-        let offset = self.offsetForDrawing(atPoint: point)
+        var point = point
+        
+        if let fixedX = fixedX {
+            point.x = fixedX
+        }
+        if let fixedY = fixedY {
+            point.y = fixedY
+        }
+        
+        point.x += offsetPoint.x
+        point.y += offsetPoint.y
+        
+        let offset: CGPoint = {
+            if fixedX == nil && fixedY == nil {
+                return self.offsetForDrawing(atPoint: point)
+            }
+            return .zero
+        }()
         let size = self.size
         
         var rect = CGRect(

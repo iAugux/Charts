@@ -9,6 +9,11 @@
 import UIKit
 import Charts
 
+private let BAR_WIDTH: CGFloat = 0.65
+private let MIN_K_W: CGFloat = 1
+private let MAX_K_H: CGFloat = 12
+private let INCREASING_FILLED = false
+
 class CandleStickChartViewController: DemoBaseViewController {
 
     @IBOutlet var chartView: CandleStickChartView!
@@ -21,47 +26,43 @@ class CandleStickChartViewController: DemoBaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        self.title = "Candle Stick Chart"
-        self.options = [.toggleValues,
-                        .toggleIcons,
-                        .toggleHighlight,
-                        .animateX,
-                        .animateY,
-                        .animateXY,
-                        .saveToGallery,
-                        .togglePinchZoom,
-                        .toggleAutoScaleMinMax,
-                        .toggleShadowColorSameAsCandle,
-                        .toggleShowCandleBar,
-                        .toggleData]
+        chartView.backgroundColor = .clear
+        chartView.noDataText = ""
+        chartView.chartDescription = nil
+        chartView.minOffset = 0
+        chartView.legend.enabled = false
+        chartView.setExtraOffsets(left: 0, top: 0, right: 0, bottom: 0)
         
         chartView.delegate = self
+        chartView.dragEnabled = true
+        chartView.scaleYEnabled = false
+        chartView.autoScaleMinMaxEnabled = true
+        chartView.dragDecelerationEnabled = true
+        chartView.doubleTapToZoomEnabled = false
+        chartView.dragDecelerationFrictionCoef = 0.2
+        chartView.highlightPerTapEnabled = true
         
-        chartView.chartDescription?.enabled = false
+        let rightAxis = chartView.rightAxis
+        rightAxis.labelPosition = .insideChart
+        rightAxis.labelTextColor = #colorLiteral(red: 0.3607843137, green: 0.3647058824, blue: 0.4, alpha: 1)
+        rightAxis.gridLineWidth = 1
+        rightAxis.gridColor = UIColor(white: 0, alpha: 0.04)
+        rightAxis.drawAxisLineEnabled = false
         
-        chartView.dragEnabled = false
-        chartView.setScaleEnabled(true)
-        chartView.maxVisibleCount = 200
-        chartView.pinchZoomEnabled = true
+        let leftAxis = chartView.leftAxis
+        leftAxis.enabled = false
         
-        chartView.legend.horizontalAlignment = .right
-        chartView.legend.verticalAlignment = .top
-        chartView.legend.orientation = .vertical
-        chartView.legend.drawInside = false
-        chartView.legend.font = UIFont(name: "HelveticaNeue-Light", size: 10)!
+        let xAxis = chartView.xAxis
+        xAxis.gridLineWidth = 1
+        xAxis.gridColor = UIColor(white: 0, alpha: 0.04)
+        xAxis.drawAxisLineEnabled = false
+        xAxis.setLabelCount(5, force: true)
         
-        chartView.leftAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
-        chartView.leftAxis.spaceTop = 0.3
-        chartView.leftAxis.spaceBottom = 0.3
-        chartView.leftAxis.axisMinimum = 0
+        rightAxis.yOffset = -6
+        rightAxis.setLabelCount(5, force: true)
         
-        chartView.rightAxis.enabled = false
+        xAxis.drawLabelsEnabled = false
         
-        chartView.xAxis.labelPosition = .bottom
-        chartView.xAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
-        
-        sliderX.value = 10
-        sliderY.value = 50
         slidersValueChanged(nil)
     }
     
@@ -72,6 +73,26 @@ class CandleStickChartViewController: DemoBaseViewController {
         }
         
         self.setDataCount(Int(sliderX.value), range: UInt32(sliderY.value))
+        
+        makeChartsReadeable(with: Int(sliderX.value))
+    }
+    
+    private func makeChartsReadeable(with count: Int) {
+        guard count > 0 else { return }
+        
+        let width = CGFloat(view.bounds.width)
+        let count = CGFloat(count)
+        let per = width / count
+        let min = MIN_K_W / per
+        let max = MAX_K_H / per
+        
+        func set(_ chartView: CandleStickChartView) {
+            let viewPortHandler = chartView.viewPortHandler
+            viewPortHandler?.setMinimumScaleX(min)
+            viewPortHandler?.setMaximumScaleX(max)
+        }
+        
+        set(chartView)
     }
     
     func setDataCount(_ count: Int, range: UInt32) {
@@ -96,8 +117,28 @@ class CandleStickChartViewController: DemoBaseViewController {
         set1.decreasingColor = .red
         set1.decreasingFilled = true
         set1.increasingColor = UIColor(red: 122/255, green: 242/255, blue: 84/255, alpha: 1)
-        set1.increasingFilled = false
+        set1.increasingFilled = true
         set1.neutralColor = .blue
+        set1.verticalHighlightColor = #colorLiteral(red: 0.4392156863, green: 0.5254901961, blue: 0.9019607843, alpha: 0.2)
+        set1.highlightColor = #colorLiteral(red: 0.1568627451, green: 0.1607843137, blue: 0.1803921569, alpha: 1)
+        
+        let marker = LabelMarkerView(color: .black,
+                                     font: UIFont(name: "Avenir-Book", size: 10)!,
+                                     textColor: .white,
+                                     insets: UIEdgeInsets(top: 1, left: 3, bottom: 0, right: 4),
+                                     xAxisValueFormatter: chartView.rightAxis.valueFormatter!)
+        
+        marker.fixedX = chartView.viewPortHandler.chartWidth
+        marker.arrowSize = .zero
+        marker.offsetPoint = CGPoint(x: 0, y: 14 / 2)
+        marker.chartView = chartView
+        marker.minimumSize = CGSize(width: 46, height: 14)
+        chartView.marker = marker
+        
+        let viewPortHandler = chartView.viewPortHandler
+        viewPortHandler?.setMaximumScaleX(300 * 5 / 127)
+        let transform = CGAffineTransform(scaleX: CGFloat.greatestFiniteMagnitude, y: 1)
+        viewPortHandler?.refresh(newMatrix: transform, chart: chartView, invalidate: false)
         
         let data = CandleChartData(dataSet: set1)
         chartView.data = data

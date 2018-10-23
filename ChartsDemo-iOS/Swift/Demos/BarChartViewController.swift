@@ -81,14 +81,16 @@ class BarChartViewController: DemoBaseViewController {
         l.font = UIFont(name: "HelveticaNeue-Light", size: 11)!
         l.xEntrySpace = 4
 //        chartView.legend = l
-
-        let marker = XYMarkerView(color: UIColor(white: 180/250, alpha: 1),
-                                  font: .systemFont(ofSize: 12),
+        
+        let marker = LabelMarkerView(color: .black,
+                                  font: UIFont(name: "Avenir-Book", size: 10)!,
                                   textColor: .white,
-                                  insets: UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8),
+                                  insets: UIEdgeInsets(top: 2, left: 4, bottom: 0, right: 4),
                                   xAxisValueFormatter: chartView.xAxis.valueFormatter!)
+        marker.fixedY = chartView.viewPortHandler.chartHeight - 93
+        marker.arrowSize = .zero
         marker.chartView = chartView
-        marker.minimumSize = CGSize(width: 80, height: 40)
+        marker.minimumSize = CGSize(width: 0, height: 18)
         chartView.marker = marker
         
         sliderX.value = 12
@@ -134,6 +136,10 @@ class BarChartViewController: DemoBaseViewController {
             data.barWidth = 0.9
             chartView.data = data
         }
+        
+        set1.shouldHighlightFullHeight = true
+        set1.highlightColor = #colorLiteral(red: 0.4392156863, green: 0.5254901961, blue: 0.9019607843, alpha: 0.2)
+        set1.highlightAlpha = 1
         
 //        chartView.setNeedsDisplay()
     }

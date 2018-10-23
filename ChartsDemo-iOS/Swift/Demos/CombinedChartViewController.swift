@@ -205,6 +205,7 @@ class CombinedChartViewController: DemoBaseViewController {
         set.shadowColor = .darkGray
         set.valueFont = .systemFont(ofSize: 10)
         set.drawValuesEnabled = false
+        set.verticalHighlightColor = #colorLiteral(red: 0.4392156863, green: 0.5254901961, blue: 0.9019607843, alpha: 0.2)
         
         return CandleChartData(dataSet: set)
     }
