@@ -31,6 +31,21 @@ open class LineScatterCandleRadarRenderer: BarLineScatterCandleBubbleRenderer
         // draw vertical highlight lines
         if set.isVerticalHighlightIndicatorEnabled
         {
+            if set.verticalHighlightColor != nil
+            {
+                // TODO: - set the right width
+                context.setLineWidth(8)
+                let color: NSUIColor = {
+                    if let color = set.verticalHighlightColor {
+                        return color ?? set.highlightColor
+                    }
+                    return set.highlightColor
+                }()
+                context.setStrokeColor(color.cgColor)
+            } else {
+                context.setLineWidth(set.highlightLineWidth)
+                context.setStrokeColor(set.highlightColor.cgColor)
+            }
             context.beginPath()
             context.move(to: CGPoint(x: point.x, y: viewPortHandler.contentTop))
             context.addLine(to: CGPoint(x: point.x, y: viewPortHandler.contentBottom))
@@ -40,6 +55,8 @@ open class LineScatterCandleRadarRenderer: BarLineScatterCandleBubbleRenderer
         // draw horizontal highlight lines
         if set.isHorizontalHighlightIndicatorEnabled
         {
+            context.setLineWidth(set.highlightLineWidth)
+            context.setStrokeColor(set.highlightColor.cgColor)
             context.beginPath()
             context.move(to: CGPoint(x: viewPortHandler.contentLeft, y: point.y))
             context.addLine(to: CGPoint(x: viewPortHandler.contentRight, y: point.y))

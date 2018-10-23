@@ -24,6 +24,8 @@ open class BarLineScatterCandleBubbleChartDataSet: ChartDataSet, IBarLineScatter
     open var highlightLineDashPhase = CGFloat(0.0)
     open var highlightLineDashLengths: [CGFloat]?
     
+    open var verticalHighlightColor: NSUIColor?
+
     // MARK: - NSCopying
     
     open override func copyWithZone(_ zone: NSZone?) -> AnyObject
@@ -33,6 +35,7 @@ open class BarLineScatterCandleBubbleChartDataSet: ChartDataSet, IBarLineScatter
         copy.highlightLineWidth = highlightLineWidth
         copy.highlightLineDashPhase = highlightLineDashPhase
         copy.highlightLineDashLengths = highlightLineDashLengths
+        copy.verticalHighlightColor = verticalHighlightColor
         return copy
     }
 }

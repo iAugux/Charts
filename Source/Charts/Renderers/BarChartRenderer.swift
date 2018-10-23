@@ -751,7 +751,11 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 
                 setHighlightDrawPos(highlight: high, barRect: barRect)
                 
-                context.fill(barRect)
+                if set.shouldHighlightFullHeight {
+                    barRect.origin.y = 0
+                    barRect.size.height = viewPortHandler.chartHeight
+                    context.fill(barRect)
+                }
             }
         }
         
