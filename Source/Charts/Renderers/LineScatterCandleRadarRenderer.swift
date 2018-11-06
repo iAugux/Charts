@@ -33,8 +33,7 @@ open class LineScatterCandleRadarRenderer: BarLineScatterCandleBubbleRenderer
         {
             if set.verticalHighlightColor != nil
             {
-                // TODO: - set the right width
-                context.setLineWidth(8)
+                context.setLineWidth(highlightWidth)
                 let color: NSUIColor = {
                     if let color = set.verticalHighlightColor {
                         return color ?? set.highlightColor
