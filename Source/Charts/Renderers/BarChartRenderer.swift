@@ -756,6 +756,8 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                     barRect.size.height = viewPortHandler.chartHeight
                     context.fill(barRect)
                 }
+                
+                highlightWidth = barRect.width
             }
         }
         

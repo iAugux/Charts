@@ -24,6 +24,8 @@ open class DataRenderer: Renderer
     /// Subclasses should populate this array in drawData() or drawDataSet() to make the chart accessible.
     @objc final var accessibleChartElements: [NSUIAccessibilityElement] = []
 
+    open var highlightWidth: CGFloat = 0
+
     @objc public let animator: Animator
     
     @objc public init(animator: Animator, viewPortHandler: ViewPortHandler)
